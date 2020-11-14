@@ -37,6 +37,7 @@ pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
         removeSHMacro(boma, status_kind);
         quickAttackCancels(boma, status_kind, situation_kind, fighter_kind, stick_value_y);  
         regainAirDodge(boma, status_kind, situation_kind);
+        enable_transition_term(module_accessor, *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ESCAPE_AIR);
     }
 }
 
@@ -135,6 +136,24 @@ pub unsafe fn regainAirDodge(boma: &mut smash::app::BattleObjectModuleAccessor, 
         CANAIRDODGE[get_player_number(boma)] = true;
     }
 }
+
+#[skyline::hook(replace = smash::app::lua_bind::WorkModule::is_enable_transition_term)]
+
+pub unsafe fn is_enable_transition_term_hook(boma: &mut smash::app::BattleObjectModuleAccessor, flag: i32) -> bool {
+    let status_kind = StatusModule::status_kind(boma);
+    let fighter_kind = get_kind(boma);
+ 
+    if flag == *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ESCAPE_AIR {
+        if !CANAIRDODGE[get_player_number(boma)] {
+            if CancelModule::is_enable_cancel(boma) {
+                return false;
+            }
+        }
+    }
+
+    original!()(boma, flag)
+}
+
 
 // Use this for general per-frame weapon-level hooks
 pub fn once_per_weapon_frame(fighter_base : &mut L2CFighterBase) {
