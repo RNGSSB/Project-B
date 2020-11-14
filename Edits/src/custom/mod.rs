@@ -6,7 +6,6 @@ use smash::lua2cpp::{L2CFighterCommon, L2CFighterBase};
 use smash::lib::lua_const::*;
 use smash::phx::*;
 use acmd;
-use crate::FIGHTER_CUTIN_MANAGER_ADDR;
 use skyline::nn::ro::LookupSymbol;
 
 static mut LOCKED: [bool; 9] = [false; 9];
@@ -37,6 +36,10 @@ pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
         removeSHMacro(boma, status_kind);
         quickAttackCancels(boma, status_kind, situation_kind, fighter_kind, stick_value_y);  
     }
+}
+
+pub unsafe fn get_player_number(boma: &mut smash::app::BattleObjectModuleAccessor) -> usize {
+    return WorkModule::get_int(boma, *FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
 }
 
 pub unsafe fn dacus(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, cat1: i32, stick_value_y: f32) { //Dacus
