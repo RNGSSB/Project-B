@@ -9,6 +9,7 @@ use acmd;
 use skyline::nn::ro::LookupSymbol;
 
 static mut LOCKED: [bool; 9] = [false; 9];
+static mut CANAIRDODGE: [bool; 9] = [true; 9];
 
 // Use this for general per-frame fighter-level hooks
 pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
@@ -35,6 +36,7 @@ pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
         sm4shJabLocks(boma, status_kind);
         removeSHMacro(boma, status_kind);
         quickAttackCancels(boma, status_kind, situation_kind, fighter_kind, stick_value_y);  
+        regainAirDodge(boma, status_kind, situation_kind);
     }
 }
 
@@ -122,6 +124,15 @@ pub unsafe fn quickAttackCancels (boma: &mut smash::app::BattleObjectModuleAcces
                 }
             }
         }
+    }
+}
+
+pub unsafe fn regainAirDodge(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, situation_kind: i32) {
+    if situation_kind != *SITUATION_KIND_AIR {
+        CANAIRDODGE[get_player_number(boma)] = true;
+    }
+    if status_kind == *FIGHTER_STATUS_KIND_ESCAPE_AIR {
+        CANAIRDODGE[get_player_number(boma)] = true;
     }
 }
 
