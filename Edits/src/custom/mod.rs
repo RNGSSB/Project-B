@@ -9,6 +9,8 @@ use acmd;
 use crate::FIGHTER_CUTIN_MANAGER_ADDR;
 use skyline::nn::ro::LookupSymbol;
 
+static mut LOCKED: [bool; 9] = [false; 9];
+
 // Use this for general per-frame fighter-level hooks
 pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
     unsafe {
@@ -26,6 +28,7 @@ pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
         let motion_kind = MotionModule::motion_kind(boma);
         let kinetic_type = KineticModule::get_kinetic_type(boma);
         let flick_x_dir = ControlModule::get_flick_x_dir(boma);
+        
         
         dacus(boma, status_kind, cat1, stick_value_y);
         landCancels(boma, status_kind, situation_kind, fighter_kind);
