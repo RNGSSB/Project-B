@@ -10,6 +10,7 @@ use skyline::nn::ro::LookupSymbol;
 
 static mut LOCKED: [bool; 9] = [false; 9];
 static mut CANAIRDODGE: [bool; 9] = [true; 9];
+static mut LEDGE_POS: [Vector3f; 9] = [smash::phx::Vector3f { x: 0.0, y: 0.0, z: 0.0}; 9];
 
 // Use this for general per-frame fighter-level hooks
 pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
@@ -28,16 +29,15 @@ pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
         let motion_kind = MotionModule::motion_kind(boma);
         let kinetic_type = KineticModule::get_kinetic_type(boma);
         let flick_x_dir = ControlModule::get_flick_x_dir(boma);
-        
-        
+        JostleModule::set_team(boma, 0);
         dacus(boma, status_kind, cat1, stick_value_y);
         landCancels(boma, status_kind, situation_kind, fighter_kind);
         perfectPivots(boma, status_kind, stick_value_x);
         sm4shJabLocks(boma, status_kind);
         removeSHMacro(boma, status_kind);
         quickAttackCancels(boma, status_kind, situation_kind, fighter_kind, stick_value_y);  
-        regainAirDodge(boma, status_kind, situation_kind);
-        enable_transition_term(module_accessor, *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ESCAPE_AIR);
+        randomTripping(boma, status_kind);
+ 
     }
 }
 
@@ -61,7 +61,7 @@ pub unsafe fn dacus(boma: &mut smash::app::BattleObjectModuleAccessor, status_ki
     }
 }
 
-//fox/falco land cancle blaster
+//Special Land Cancel
 pub unsafe fn landCancels(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, situation_kind: i32, fighter_kind: i32) { //Land Cancels
     if [*FIGHTER_KIND_FOX, *FIGHTER_KIND_FALCO].contains(&fighter_kind) {
         if status_kind == *FIGHTER_STATUS_KIND_SPECIAL_N {
@@ -72,7 +72,7 @@ pub unsafe fn landCancels(boma: &mut smash::app::BattleObjectModuleAccessor, sta
     }
 }
 
-//perfect pivots
+//Perfect pivots
 pub unsafe fn perfectPivots(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, stick_value_x: f32) { //Perfect Pivots and microdashes
     if [*FIGHTER_STATUS_KIND_TURN_DASH, *FIGHTER_STATUS_KIND_DASH].contains(&status_kind) {
         if MotionModule::frame(boma) < (3.0) && stick_value_x < 0.5 && stick_value_x > -0.5 {
@@ -81,7 +81,7 @@ pub unsafe fn perfectPivots(boma: &mut smash::app::BattleObjectModuleAccessor, s
     }
 }
 
-//smash 4 jab locks (forces neutral getup)
+//Jab lock forces neutral getup
 pub unsafe fn sm4shJabLocks(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32) {
     if status_kind == *FIGHTER_STATUS_KIND_DOWN_DAMAGE { //Sm4sh jab locks
         LOCKED[get_player_number(boma)] = true;
@@ -97,6 +97,7 @@ pub unsafe fn sm4shJabLocks(boma: &mut smash::app::BattleObjectModuleAccessor, s
     }
 }
 
+//Remove Shorthop Attack Macro
 pub unsafe fn removeSHMacro(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32) {
     if status_kind == *FIGHTER_STATUS_KIND_JUMP_SQUAT || StatusModule::prev_status_kind(boma, 0) == *FIGHTER_STATUS_KIND_JUMP_SQUAT 
     || StatusModule::prev_status_kind(boma, 1) == *FIGHTER_STATUS_KIND_JUMP_SQUAT {
@@ -119,7 +120,7 @@ pub unsafe fn removeSHMacro(boma: &mut smash::app::BattleObjectModuleAccessor, s
     }
 }
 
-//pikachu quick attack cancles
+//Pikachu quick attack cancles
 pub unsafe fn quickAttackCancels (boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, situation_kind: i32, fighter_kind: i32, stick_value_y: f32) {
     if [*FIGHTER_KIND_PICHU, *FIGHTER_KIND_PIKACHU].contains(&fighter_kind) {
         if [*FIGHTER_STATUS_KIND_SPECIAL_HI, *FIGHTER_STATUS_KIND_LANDING_FALL_SPECIAL].contains(&status_kind) {
@@ -133,64 +134,22 @@ pub unsafe fn quickAttackCancels (boma: &mut smash::app::BattleObjectModuleAcces
     }
 }
 
-pub unsafe fn regainAirDodge(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, situation_kind: i32) {
-    if situation_kind != *SITUATION_KIND_AIR {
-        CANAIRDODGE[get_player_number(boma)] = true;
-    }
-    if status_kind == *FIGHTER_STATUS_KIND_ESCAPE_AIR {
-        CANAIRDODGE[get_player_number(boma)] = true;
-    }
-}
-
-#[skyline::hook(replace = smash::app::lua_bind::WorkModule::is_enable_transition_term)]
-
-pub unsafe fn is_enable_transition_term_hook(boma: &mut smash::app::BattleObjectModuleAccessor, flag: i32) -> bool {
-    let status_kind = StatusModule::status_kind(boma);
-    let fighter_kind = get_kind(boma);
- 
-    if flag == *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ESCAPE_AIR {
-        if !CANAIRDODGE[get_player_number(boma)] {
-            if CancelModule::is_enable_cancel(boma) {
-                return false;
-            }
-        }
-    }
-
-    original!()(boma, flag)
-}
-
-//random tripping
+//Random tripping
 pub unsafe fn randomTripping (boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32) {
-    if [*FIGHTER_STATUS_KIND_DASH, *FIGHTER_STATUS_KIND_RUN, *FIGHTER_STATUS_KIND_TURN_DASH, *FIGHTER_STATUS_KIND_TURN_RUN].contains(&status_kind) {
+    if [*FIGHTER_STATUS_KIND_DASH].contains(&status_kind) {
         let rng = smash::app::sv_math::rand(0, 100);
         if rng == 0 {
             StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_SLIP, true);
         }
     }
-} 
 
-//removed short hop buffer
-pub unsafe fn removeSHMacro(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32) {
-    if status_kind == *FIGHTER_STATUS_KIND_JUMP_SQUAT || StatusModule::prev_status_kind(boma, 0) == *FIGHTER_STATUS_KIND_JUMP_SQUAT 
-    || StatusModule::prev_status_kind(boma, 1) == *FIGHTER_STATUS_KIND_JUMP_SQUAT {
-        if ControlModule::check_button_on(boma, *CONTROL_PAD_BUTTON_JUMP) || (ControlModule::is_enable_flick_jump(boma) && ControlModule::check_button_on(boma, *CONTROL_PAD_BUTTON_FLICK_JUMP)) {
-            WorkModule::off_flag(boma, *FIGHTER_STATUS_WORK_ID_FLAG_RESERVE_JUMP_MINI);
-        }
-        else {
-            WorkModule::on_flag(boma, *FIGHTER_STATUS_WORK_ID_FLAG_RESERVE_JUMP_MINI);
+    if [*FIGHTER_STATUS_KIND_TURN_DASH].contains(&status_kind) {
+        let rng = smash::app::sv_math::rand(0, 80);
+        if rng == 0 {
+            StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_SLIP, true);
         }
     }
-    if status_kind == *FIGHTER_STATUS_KIND_JUMP {
-        if MotionModule::frame(boma) < 2.0 {
-            if ControlModule::check_button_on(boma, *CONTROL_PAD_BUTTON_JUMP) || (ControlModule::is_enable_flick_jump(boma) && ControlModule::check_button_on(boma, *CONTROL_PAD_BUTTON_FLICK_JUMP)) {
-                WorkModule::off_flag(boma, *FIGHTER_STATUS_WORK_ID_FLAG_RESERVE_JUMP_MINI);
-            }
-            else {
-                WorkModule::on_flag(boma, *FIGHTER_STATUS_WORK_ID_FLAG_RESERVE_JUMP_MINI);
-            }
-        }
-    }
-}
+} 
 
 // Use this for general per-frame weapon-level hooks
 pub fn once_per_weapon_frame(fighter_base : &mut L2CFighterBase) {
@@ -203,8 +162,43 @@ pub fn once_per_weapon_frame(fighter_base : &mut L2CFighterBase) {
         }
     }
 }
+      
+#[skyline::hook(replace = smash::app::lua_bind::GroundModule::entry_cliff)]
+
+pub unsafe fn entry_cliff_hook(boma: &mut smash::app::BattleObjectModuleAccessor) -> u64 {
+    let entry_id = get_player_number(boma);
+    LEDGE_POS[entry_id] = GroundModule::hang_cliff_pos_3f(boma);
+    original!()(boma)
+}
+
+#[skyline::hook(replace = smash::app::lua_bind::GroundModule::leave_cliff)]
+
+pub unsafe fn leave_cliff_hook(boma: &mut smash::app::BattleObjectModuleAccessor) -> u64 {
+    let entry_id = get_player_number(boma);
+    LEDGE_POS[entry_id] = smash::phx::Vector3f { x: 0.0, y: 0.0, z:0.0 };
+    original!()(boma)
+} 
+
+#[skyline::hook(replace = smash::app::lua_bind::GroundModule::can_entry_cliff)]
+pub unsafe fn can_entry_cliff_hook(boma: &mut smash::app::BattleObjectModuleAccessor) -> u64 {
+    let pos = GroundModule::hang_cliff_pos_3f(boma);
+    let entry_id = get_player_number(boma);
+    for i in 0..9 {
+        i as usize;
+        if i == entry_id || LEDGE_POS[i].x == 0.0 {
+            continue;
+        }
+        if pos.x == LEDGE_POS[i].x && pos.y == LEDGE_POS[i].y {
+            return 0 as u64;
+        }
+    }
+    original!()(boma)
+} 
 
 pub fn install() {
     acmd::add_custom_hooks!(once_per_fighter_frame);
     acmd::add_custom_weapon_hooks!(once_per_weapon_frame);
+    skyline::install_hook!(entry_cliff_hook);
+    skyline::install_hook!(leave_cliff_hook);
+    skyline::install_hook!(can_entry_cliff_hook); 
 }

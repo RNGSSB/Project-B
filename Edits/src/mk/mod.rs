@@ -3,7 +3,6 @@ use smash::lib::lua_const::*;
 use smash::app::lua_bind::*;
 use smash::lua2cpp::L2CFighterCommon;
 use acmd::{acmd, acmd_func};
-use crate::FIGHTER_CUTIN_MANAGER_ADDR;
 use skyline::nn::ro::LookupSymbol;
 use smash::app;
 
@@ -61,4 +60,10 @@ pub fn mk_nado_air_end(fighter: &mut L2CFighterCommon) {
         frame(Frame=21)
         FT_MOTION_RATE(FSM=1)
     });
+}
+
+pub fn install() {
+    acmd::add_hooks!(
+    mk_nado_air_end, mk_nado_end, mk_nado_spin
+    );
 }
