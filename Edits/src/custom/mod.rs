@@ -136,17 +136,25 @@ pub unsafe fn quickAttackCancels (boma: &mut smash::app::BattleObjectModuleAcces
 
 //Random tripping
 pub unsafe fn randomTripping (boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32) {
-    if [*FIGHTER_STATUS_KIND_DASH].contains(&status_kind) {
+    if [*FIGHTER_STATUS_KIND_DASH, *FIGHTER_STATUS_KIND_TURN_DASH].contains(&status_kind) {
         let rng = smash::app::sv_math::rand(0, 100);
         if rng == 0 {
             StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_SLIP, true);
         }
+        else
+        {
+            return;
+        }
     }
 
-    if [*FIGHTER_STATUS_KIND_TURN_DASH].contains(&status_kind) {
+    if [*FIGHTER_STATUS_KIND_TURN_RUN].contains(&status_kind) {
         let rng = smash::app::sv_math::rand(0, 80);
         if rng == 0 {
             StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_SLIP, true);
+        }
+        else
+        {
+            return;
         }
     }
 } 
