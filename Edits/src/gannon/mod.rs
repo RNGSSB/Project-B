@@ -9,8 +9,8 @@ use smash::app;
 #[acmd::acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
     battle_object_kind = FIGHTER_KIND_GANON, 
-    animation = "attack_hi3",
-    animcmd = "game_attackhi3")]
+    animation = "attack_hi4",
+    animcmd = "game_attackhi4")]
 pub fn ganon_attackhi3(fighter : &mut L2CFighterCommon) {
     acmd!({
         frame(21);
@@ -33,8 +33,8 @@ pub fn ganon_attackhi3(fighter : &mut L2CFighterCommon) {
 #[acmd::acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
     battle_object_kind = FIGHTER_KIND_GANON, 
-    animation = "attack_hi3",
-    animcmd = "effect_attackhi3")]
+    animation = "attack_hi4",
+    animcmd = "effect_attackhi4")]
 pub fn ganon_attackhi3_effect(fighter : &mut L2CFighterCommon) {
     acmd!({
         frame(21);
