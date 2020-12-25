@@ -16,6 +16,10 @@ pub fn mk_uair(fighter: &mut L2CFighterCommon) {
         if(is_excute){
             FT_MOTION_RATE(FSM=0.3)
         }
+        frame(Frame=5)
+        if(is_excute){ 
+        FT_MOTION_RATE(FSM=1)
+        }
         frame(Frame=6)
         if(is_excute){ 
         WorkModule::on_flag(Flag=FIGHTER_STATUS_ATTACK_AIR_FLAG_ENABLE_LANDING)
