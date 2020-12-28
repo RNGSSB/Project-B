@@ -14,7 +14,7 @@ use smash::app;
 pub fn mk_uair(fighter: &mut L2CFighterCommon) {
     acmd!({
         if(is_excute){
-            FT_MOTION_RATE(FSM=0.3)
+            FT_MOTION_RATE(FSM=0.25)
         }
         frame(Frame=5)
         if(is_excute){ 

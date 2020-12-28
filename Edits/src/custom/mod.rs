@@ -36,6 +36,7 @@ pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
         JostleModule::set_team(boma, 0);
         dacus(boma, status_kind, cat1, stick_value_y);
         landCancels(boma, status_kind, situation_kind, fighter_kind);
+        noTechFootstools(boma, status_kind, fighter_kind);
         perfectPivots(boma, status_kind, stick_value_x);
         sm4shJabLocks(boma, status_kind);
         removeSHMacro(boma, status_kind);
@@ -55,9 +56,12 @@ pub unsafe fn get_player_number(boma: &mut smash::app::BattleObjectModuleAccesso
 pub unsafe fn is_enable_transition_term_hook(boma: &mut smash::app::BattleObjectModuleAccessor, flag: i32) -> bool {
     let status_kind = StatusModule::status_kind(boma);
     let fighter_kind = get_kind(boma);
-    if flag == *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ESCAPE_AIR {
-                return true;
+    if (cat1 & *FIGHTER_PAD_CMD_CAT1_FLAG_ESCAPE) != 0 || ControlModule::check_button_trigger(boma, *CONTROL_PAD_BUTTON_GUARD) {
+        if flag == *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ESCAPE_AIR {
+            return true;
+        }
     }
+
     original!()(boma, flag)
 }
 
@@ -86,6 +90,12 @@ pub unsafe fn landCancels(boma: &mut smash::app::BattleObjectModuleAccessor, sta
             }
         }
     }
+}
+
+pub unsafe fn noTechFootstools(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, fighter_kind: i32) { //Land Cancels
+            if StatusModule::prev_status_kind(boma) == *FIGHTER_STATUS_KIND_TREAD_FALL && situation_kind == (*FIGHTER_STATUS_KIND_PASSIVE || *FIGHTER_STATUS_KIND_PASSIVE_FB) {
+                StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_DOWN, true);
+            }
 }
 
 //Perfect pivots
@@ -158,7 +168,7 @@ pub unsafe fn removeSHMacro(boma: &mut smash::app::BattleObjectModuleAccessor, s
     }
 }
 
-//Pikachu quick attack cancles
+//Pikachu quick attack cancels
 pub unsafe fn quickAttackCancels (boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, situation_kind: i32, fighter_kind: i32, stick_value_y: f32) {
     if [*FIGHTER_KIND_PICHU, *FIGHTER_KIND_PIKACHU].contains(&fighter_kind) {
         if [*FIGHTER_STATUS_KIND_SPECIAL_HI, *FIGHTER_STATUS_KIND_LANDING_FALL_SPECIAL].contains(&status_kind) {
@@ -175,7 +185,7 @@ pub unsafe fn quickAttackCancels (boma: &mut smash::app::BattleObjectModuleAcces
 //Random tripping
 pub unsafe fn randomTripping (boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32) {
     if [*FIGHTER_STATUS_KIND_DASH, *FIGHTER_STATUS_KIND_TURN_DASH].contains(&status_kind) {
-        let rng = smash::app::sv_math::rand(0, 200);
+        let rng = smash::app::sv_math::rand(0, 300);
         if rng == 0 {
             StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_SLIP, true);
         }
@@ -186,7 +196,7 @@ pub unsafe fn randomTripping (boma: &mut smash::app::BattleObjectModuleAccessor,
     }
 
     if [*FIGHTER_STATUS_KIND_TURN_RUN].contains(&status_kind) {
-        let rng = smash::app::sv_math::rand(0, 180);
+        let rng = smash::app::sv_math::rand(0, 280);
         if rng == 0 {
             StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_SLIP, true);
         }
