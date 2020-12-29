@@ -9,6 +9,7 @@ mod mk;
 mod falco;
 mod wolf;
 mod marth;
+mod fox;
 
 #[skyline::main(name = "acmd_test")]
 pub fn main() {
@@ -20,4 +21,5 @@ pub fn main() {
     falco::install();
     wolf::install();
     marth::install();
+    fox::install();
 }
