@@ -20,7 +20,7 @@ pub fn wolf_utilt(fighter: &mut L2CFighterCommon) {
         }
         wait(Frames=2)
         if(is_excute){
-        AttackModule::clear(ID=0)
+        AttackModule::clear(ID=0, false)
         }
         wait(Frames=3)
         if(is_excute){

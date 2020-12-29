@@ -231,6 +231,7 @@ pub fn falco_dtilt(fighter: &mut L2CFighterCommon) {
     });
 }
 
+/*
 #[acmd::acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
     battle_object_kind = FIGHTER_KIND_FALCO, 
@@ -259,14 +260,14 @@ pub fn falco_dsmash(fighter: &mut L2CFighterCommon) {
         }
         wait(Frames=1)
         if(is_excute){
-        HitModule::set_status_all(HIT_STATUS_NORMAL)
+            HitModule::set_status_all(app::HitStatus(*HIT_STATUS_NORMAL), false);
         }
         wait(Frames=2)
         if(is_excute){
         AttackModule::clear_all()
         }  
     });
-}
+}*/
 
 #[acmd::acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
@@ -294,7 +295,7 @@ pub fn falco_upsmash(fighter: &mut L2CFighterCommon) {
         }
         wait(Frames=1)
         if(is_excute){
-        AttackModule::clear(ID=2)
+        AttackModule::clear(ID=2, false)
         }
         wait(Frames=1)
         if(is_excute){
@@ -429,8 +430,8 @@ pub fn falco_fsmash(fighter: &mut L2CFighterCommon) {
         frame(Frame=20)
         if(is_excute){
         ATTACK(ID=0, Part=0, Bone=hash40("top"), Damage=10.0, Angle=361, KBG=90, FKB=0, BKB=10, Size=9.0, X=0.0, Y=5.0, Z=13.0, X2=0.0, Y2=5.0, Z2=6.0, Hitlag=0.3, SDI=0.3, Clang_Rebound=ATTACK_SETOFF_KIND_THRU, FacingRestrict=ATTACK_LR_CHECK_F, SetWeight=false, ShieldDamage=0, Trip=0.0, Rehit=0, Reflectable=false, Absorbable=false, Flinchless=false, DisableHitlag=false, Direct_Hitbox=true, Ground_or_Air=COLLISION_SITUATION_MASK_GA, Hitbits=COLLISION_CATEGORY_MASK_ALL, CollisionPart=COLLISION_PART_MASK_ALL, FriendlyFire=false, Effect=hash40("collision_attr_cutup"), SFXLevel=ATTACK_SOUND_LEVEL_M, SFXType=COLLISION_SOUND_ATTR_CUTUP, Type=ATTACK_REGION_PUNCH)
-        AttackModule::clear(ID=1)
-        AttackModule::clear(ID=2)
+        AttackModule::clear(ID=1, false)
+        AttackModule::clear(ID=2, false)
         }
         frame(Frame=21)
         if(is_excute){
@@ -482,5 +483,6 @@ pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
 
 pub fn install() {
     acmd::add_hooks!(
-falco_bair, falco_dair, falco_dashattack, falco_dsmash, falco_dtilt, falco_fair, falco_fairland, falco_fsmash, falco_ftilt, falco_ftilthi, falco_ftiltlw, falco_nair, falco_uair, falco_upsmash, falco_utilt
-    }
+falco_bair, falco_dair, falco_dashattack, /*falco_dsmash,*/ falco_dtilt, falco_fair, falco_fairland, falco_fsmash, falco_ftilt, falco_ftilthi, falco_ftiltlw, falco_nair, falco_uair, falco_upsmash, falco_utilt
+);    
+}

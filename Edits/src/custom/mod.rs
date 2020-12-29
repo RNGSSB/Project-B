@@ -15,6 +15,7 @@ use skyline::nn::ro::LookupSymbol;
 
 static mut LOCKED: [bool; 9] = [false; 9];
 static mut LEDGE_POS: [Vector3f; 9] = [smash::phx::Vector3f { x: 0.0, y: 0.0, z: 0.0}; 9];
+static mut NOSPECIALFALL: [bool; 9] = [false; 9];
 
 // Use this for general per-frame fighter-level hooks
 pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
@@ -36,7 +37,6 @@ pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
         JostleModule::set_team(boma, 0);
         dacus(boma, status_kind, cat1, stick_value_y);
         landCancels(boma, status_kind, situation_kind, fighter_kind);
-        noTechFootstools(boma, status_kind, fighter_kind);
         perfectPivots(boma, status_kind, stick_value_x);
         sm4shJabLocks(boma, status_kind);
         removeSHMacro(boma, status_kind);
@@ -44,6 +44,8 @@ pub fn once_per_fighter_frame(fighter : &mut L2CFighterCommon) {
         randomTripping(boma, status_kind);
         skidCancelShieldGrab(boma, status_kind, cat1);
         shieldDrops(boma, status_kind, cat2);
+        shortens(boma, fighter_kind, cat1);
+        noSpecialFall(boma, status_kind, situation_kind, fighter_kind);  
     }
 }
 
@@ -56,12 +58,6 @@ pub unsafe fn get_player_number(boma: &mut smash::app::BattleObjectModuleAccesso
 pub unsafe fn is_enable_transition_term_hook(boma: &mut smash::app::BattleObjectModuleAccessor, flag: i32) -> bool {
     let status_kind = StatusModule::status_kind(boma);
     let fighter_kind = get_kind(boma);
-    if (cat1 & *FIGHTER_PAD_CMD_CAT1_FLAG_ESCAPE) != 0 || ControlModule::check_button_trigger(boma, *CONTROL_PAD_BUTTON_GUARD) {
-        if flag == *FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_ESCAPE_AIR {
-            return true;
-        }
-    }
-
     original!()(boma, flag)
 }
 
@@ -81,6 +77,34 @@ pub unsafe fn dacus(boma: &mut smash::app::BattleObjectModuleAccessor, status_ki
     }
 }
 
+pub unsafe fn noSpecialFall(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, situation_kind: i32, fighter_kind: i32) {
+    if [*FIGHTER_KIND_FOX, *FIGHTER_KIND_FALCO].contains(&fighter_kind) {
+        if situation_kind == *SITUATION_KIND_AIR {
+            if status_kind == *FIGHTER_STATUS_KIND_SPECIAL_S {
+                if !AttackModule::is_infliction_status(boma, *COLLISION_KIND_MASK_HIT) {
+                    NOSPECIALFALL[get_player_number(boma)] = true;
+                }
+            }
+            if NOSPECIALFALL[get_player_number(boma)] {
+                if status_kind == *FIGHTER_STATUS_KIND_FALL || MotionModule::frame(boma) > 22.0 || CancelModule::is_enable_cancel(boma) {
+                    StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_FALL_SPECIAL, true);
+                    NOSPECIALFALL[get_player_number(boma)] = false;
+                }
+            }
+            if ![*FIGHTER_STATUS_KIND_FALL, *FIGHTER_STATUS_KIND_SPECIAL_S].contains(&status_kind) {
+                if NOSPECIALFALL[get_player_number(boma)] {
+                    NOSPECIALFALL[get_player_number(boma)] = false;
+                }
+            }
+        }
+        else {
+            if NOSPECIALFALL[get_player_number(boma)] {
+                NOSPECIALFALL[get_player_number(boma)] = false;
+            }
+        }
+    }
+}
+
 //Special Land Cancel
 pub unsafe fn landCancels(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, situation_kind: i32, fighter_kind: i32) { //Land Cancels
     if [*FIGHTER_KIND_FOX, *FIGHTER_KIND_FALCO].contains(&fighter_kind) {
@@ -90,12 +114,6 @@ pub unsafe fn landCancels(boma: &mut smash::app::BattleObjectModuleAccessor, sta
             }
         }
     }
-}
-
-pub unsafe fn noTechFootstools(boma: &mut smash::app::BattleObjectModuleAccessor, status_kind: i32, fighter_kind: i32) { //Land Cancels
-            if StatusModule::prev_status_kind(boma) == *FIGHTER_STATUS_KIND_TREAD_FALL && situation_kind == (*FIGHTER_STATUS_KIND_PASSIVE || *FIGHTER_STATUS_KIND_PASSIVE_FB) {
-                StatusModule::change_status_request_from_script(boma, *FIGHTER_STATUS_KIND_DOWN, true);
-            }
 }
 
 //Perfect pivots
@@ -206,6 +224,17 @@ pub unsafe fn randomTripping (boma: &mut smash::app::BattleObjectModuleAccessor,
         }
     }
 } 
+
+pub unsafe fn shortens(boma: &mut smash::app::BattleObjectModuleAccessor, fighter_kind: i32, cat1: i32) { //Shortens
+    if ControlModule::check_button_trigger(boma, *CONTROL_PAD_BUTTON_SPECIAL) {
+        if fighter_kind == *FIGHTER_KIND_FOX {
+            WorkModule::on_flag(boma, *FIGHTER_FOX_ILLUSION_STATUS_WORK_ID_FLAG_RUSH_FORCE_END);
+        }
+        else if fighter_kind == *FIGHTER_KIND_FALCO {
+            WorkModule::on_flag(boma, *FIGHTER_FALCO_ILLUSION_STATUS_WORK_ID_FLAG_RUSH_FORCE_END);
+        }
+    }
+}
 
 // Use this for general per-frame weapon-level hooks
 pub fn once_per_weapon_frame(fighter_base : &mut L2CFighterBase) {
