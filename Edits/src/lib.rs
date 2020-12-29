@@ -6,7 +6,9 @@ mod doug;
 mod frog;
 mod gannon;
 mod mk;
-mod sonic;
+mod falco;
+mod wolf;
+mod marth;
 
 #[skyline::main(name = "acmd_test")]
 pub fn main() {
@@ -15,5 +17,7 @@ pub fn main() {
     frog::install();
     gannon::install();
     mk::install();
-    sonic::install();
+    falco::install();
+    wolf::install();
+    marth::install();
 }
