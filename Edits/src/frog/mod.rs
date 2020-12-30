@@ -11,7 +11,7 @@ use smash::app;
     battle_object_kind = FIGHTER_KIND_SNAKE, 
     animation = "attack_hi3",
     animcmd = "game_attackhi3")]
-pub fn snake_utilt (fighter: &mut L2CFighterCommon) {
+pub fn snake_utilt(fighter: &mut L2CFighterCommon) {
     acmd!({
         frame(Frame=6)
         if(is_excute){
@@ -161,3 +161,9 @@ pub fn snake_dtilt(fighter: &mut L2CFighterCommon) {
 });
 }
 
+
+pub fn install() {
+    acmd::add_hooks!(
+snake_utilt, snake_dashattack, snake_ftilt, snake_ftilt2, snake_dtilt
+);    
+}
