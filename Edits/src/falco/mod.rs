@@ -128,6 +128,7 @@ pub fn falco_uair(fighter: &mut L2CFighterCommon) {
         }  
     });
 }
+
 #[acmd::acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
     battle_object_kind = FIGHTER_KIND_FALCO, 
@@ -480,9 +481,29 @@ pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
     });
 }
 
+#[acmd::acmd_func(
+    battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER,
+    battle_object_kind = FIGHTER_KIND_FALCO,
+    animation = "attack_air_b",
+    animcmd = "effect_attackairb"
+    )]
+    fn falco_attack_air_b_effect(fighter: &mut L2CFighterCommon) {
+    acmd!({
+        frame(3)
+        if(is_execute){
+            EFFECT_FOLLOW(0x10001e43ad as u64, hash40("top"), 2.0, 9.0, -3.5, 23, 120, 200, 0.9, true)
+            LAST_EFFECT_SET_RATE(2.0)
+        }
+        frame(4)
+        if(is_execute){
+            EFFECT(0x1156ac182a as u64, hash40("top"), 0.0, 10.5, -10.0, 0, 0, 0, 1.35, 0, 0, 0, 0, 0, 360, true)
+            LAST_EFFECT_SET_RATE(1.3)
+        }
+    });
+    }
 
 pub fn install() {
     acmd::add_hooks!(
-falco_bair, falco_dair, falco_dashattack, /*falco_dsmash,*/ falco_dtilt, falco_fair, falco_fairland, falco_fsmash, falco_ftilt, falco_ftilthi, falco_ftiltlw, falco_nair, falco_uair, falco_upsmash, falco_utilt
+falco_bair, falco_dair, falco_dashattack, /*falco_dsmash,*/ falco_dtilt, falco_fair, falco_fairland, falco_fsmash, falco_ftilt, falco_ftilthi, falco_ftiltlw, falco_nair, falco_uair, falco_upsmash, falco_utilt, falco_attack_air_b_effect
 );    
 }
