@@ -50,3 +50,9 @@ use smash::app;
         }
     });
     }
+
+    pub fn install() {
+        acmd::add_hooks!(
+        koopa_attack_air_lw_game,
+    );    
+    }
