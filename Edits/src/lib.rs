@@ -3,7 +3,7 @@
 
 mod custom;
 mod doug;
-mod frog;
+mod snake;
 mod gannon;
 mod mk;
 mod falco;
@@ -15,7 +15,7 @@ mod fox;
 pub fn main() {
     custom::install();
     doug::install();
-    frog::install();
+    snake::install();
     gannon::install();
     mk::install();
     falco::install();
