@@ -2,7 +2,7 @@
 #![feature(proc_macro_hygiene)]
 
 mod custom;
-mod doug;
+mod bowser;
 mod snake;
 mod gannon;
 mod mk;
@@ -14,7 +14,7 @@ mod fox;
 #[skyline::main(name = "acmd_test")]
 pub fn main() {
     custom::install();
-    doug::install();
+    bowser::install();
     snake::install();
     gannon::install();
     mk::install();
