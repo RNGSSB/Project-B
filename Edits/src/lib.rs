@@ -3,23 +3,33 @@
 
 mod custom;
 mod bowser;
-mod snake;
-mod gannon;
-mod mk;
+mod dedede;
 mod falco;
-mod wolf;
-mod marth;
 mod fox;
+mod gannon;
+mod mario;
+mod marth;
+mod mk;
+mod ness;
+mod samus;
+mod snake;
+mod sonic;
+mod wolf;
 
 #[skyline::main(name = "acmd_test")]
 pub fn main() {
     custom::install();
     bowser::install();
-    snake::install();
-    gannon::install();
-    mk::install();
+    dedede::install();
     falco::install();
-    wolf::install();
-    marth::install();
     fox::install();
+    gannon::install();
+    mario::install();
+    marth::install();
+    mk::install();
+    ness::install();
+    samus::install();
+    snake::install();
+    sonic::install();
+    wolf::install();
 }
