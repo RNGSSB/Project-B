@@ -502,8 +502,43 @@ pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
     });
     }
 
+#[acmd::acmd_func(
+    battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
+    battle_object_kind = FIGHTER_KIND_FALCO, 
+    animation = "throw_lw",
+    animcmd = "game_throwlw")]
+pub fn falco_dthrow(fighter: &mut L2CFighterCommon) {
+    acmd!({
+        if(is_excute){
+            ATTACK_ABS(Kind=FIGHTER_ATTACK_ABSOLUTE_KIND_THROW, ID=0, Damage=1.0, Angle=50, KBG=130, FKB=0, BKB=50, Hitlag=0.0, Unk=1.0, FacingRestrict=ATTACK_LR_CHECK_F, Unk=0.0, Unk=true, Effect=hash40("collision_attr_normal"), SFXLevel=ATTACK_SOUND_LEVEL_S, SFXType=COLLISION_SOUND_ATTR_NONE, Type=ATTACK_REGION_THROW)            }
+            frame(Frame=13)
+            if(is_excute){
+            ArticleModule::generate_article(FIGHTER_FOX_GENERATE_ARTICLE_BLASTER)
+            }
+            frame(Frame=26)
+            if(is_excute){
+            ArticleModule::generate_article(FIGHTER_FOX_GENERATE_ARTICLE_BLASTER_BULLET)
+            CHECK_FINISH_CAMERA(2, 0)
+            FighterCutInManager::set_throw_finish_zoom_rate(1.2)
+            FighterCutInManager::set_throw_finish_offset(0, 0, 0)
+            }
+            frame(Frame=33)
+            if(is_excute){
+            ATK_HIT_ABS(FIGHTER_ATTACK_ABSOLUTE_KIND_THROW, hash40("throw"), FIGHTER_STATUS_THROW_WORK_INT_TARGET_OBJECT, FIGHTER_STATUS_THROW_WORK_INT_TARGET_HIT_GROUP, FIGHTER_STATUS_THROW_WORK_INT_TARGET_HIT_NO)
+            }
+            frame(Frame=48)
+            if(is_excute){
+            ArticleModule::set_visibility_whole(FIGHTER_FOX_GENERATE_ARTICLE_BLASTER, false)
+            }
+            
+    });
+}
+
+
+
+
 pub fn install() {
     acmd::add_hooks!(
-falco_bair, falco_dair, falco_dashattack, /*falco_dsmash,*/ falco_dtilt, falco_fair, falco_fairland, falco_fsmash, falco_ftilt, falco_ftilthi, falco_ftiltlw, falco_nair, falco_uair, falco_upsmash, falco_utilt, falco_attack_air_b_effect
+falco_bair, falco_dair, falco_dashattack, /*falco_dsmash,*/ falco_dtilt, falco_fair, falco_fairland, falco_fsmash, falco_ftilt, falco_ftilthi, falco_ftiltlw, falco_nair, falco_uair, falco_upsmash, falco_utilt, falco_attack_air_b_effect, falco_dthrow
 );    
 }
