@@ -113,7 +113,7 @@ pub fn mk_nado_air_end(fighter: &mut L2CFighterCommon) {
     battle_object_kind = FIGHTER_KIND_FALCO, 
     animation = "attacklw4",
     animcmd = "attacklw4")]
-pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
+pub fn bowser_downsmash(fighter: &mut L2CFighterCommon) {
     acmd!({
         frame(Frame=5)
         if(is_excute){
@@ -158,6 +158,6 @@ pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
 
     pub fn install() {
         acmd::add_hooks!(
-        bowser_dair,
+        bowser_dair,bowser_downsmash,
     );    
     }
