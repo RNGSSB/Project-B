@@ -56,7 +56,7 @@ use smash::app;
     battle_object_kind = FIGHTER_KIND_METAKNIGHT, 
     animation = "attack_air_lw",
     animcmd = "game_attackairlw")]
-pub fn mk_nado_air_end(fighter: &mut L2CFighterCommon) {
+pub fn bowser_dair(fighter: &mut L2CFighterCommon) {
     acmd!({
     if(is_excute){
         WorkModule::on_flag(Flag=FIGHTER_INSTANCE_WORK_ID_FLAG_NO_SPEED_OPERATION_CHK)
@@ -113,7 +113,7 @@ pub fn mk_nado_air_end(fighter: &mut L2CFighterCommon) {
     battle_object_kind = FIGHTER_KIND_FALCO, 
     animation = "attacklw4",
     animcmd = "attacklw4")]
-pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
+pub fn bowser_dsmash(fighter: &mut L2CFighterCommon) {
     acmd!({
         frame(Frame=5)
         if(is_excute){
@@ -158,6 +158,6 @@ pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
 
     pub fn install() {
         acmd::add_hooks!(
-        bowser_dair,
+        bowser_dair, bowser_dsmash
     );    
     }
