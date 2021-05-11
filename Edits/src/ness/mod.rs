@@ -26,7 +26,7 @@ pub fn ness_attack_uair(fighter: &mut L2CFighterCommon) {
         AttackModule::clear_all()
         }
         FT_MOTION_RATE(FSM=0.87)
-        frame(Frame=40)
+        frame(Frame=27)
         if(is_excute){
         WorkModule::off_flag(Flag=FIGHTER_STATUS_ATTACK_AIR_FLAG_ENABLE_LANDING)
         }

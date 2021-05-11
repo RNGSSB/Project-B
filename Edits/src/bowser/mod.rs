@@ -53,7 +53,7 @@ use smash::app;
 */
 #[acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
-    battle_object_kind = FIGHTER_KIND_METAKNIGHT, 
+    battle_object_kind = FIGHTER_KIND_KOOPA, 
     animation = "attack_air_lw",
     animcmd = "game_attackairlw")]
 pub fn bowser_dair(fighter: &mut L2CFighterCommon) {
@@ -110,9 +110,9 @@ pub fn bowser_dair(fighter: &mut L2CFighterCommon) {
 
 #[acmd::acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
-    battle_object_kind = FIGHTER_KIND_FALCO, 
-    animation = "attacklw4",
-    animcmd = "attacklw4")]
+    battle_object_kind = FIGHTER_KIND_KOOPA, 
+    animation = "attack_lw4",
+    animcmd = "game_attacklw4")]
 pub fn bowser_dsmash(fighter: &mut L2CFighterCommon) {
     acmd!({
         frame(Frame=5)

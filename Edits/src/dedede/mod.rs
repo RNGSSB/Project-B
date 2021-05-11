@@ -42,10 +42,10 @@ fn dedede_attack_air_b_game(fighter: &mut L2CFighterCommon) {
 */
 #[acmd::acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
-    battle_object_kind = FIGHTER_KIND_FALCO, 
-    animation = "landing_air_f",
-    animcmd = "game_landingairf")]
-pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
+    battle_object_kind = FIGHTER_KIND_DEDEDE, 
+    animation = "attack_air_b",
+    animcmd = "game_attackairb")]
+pub fn dedede_bair(fighter: &mut L2CFighterCommon) {
     acmd!({
         frame(Frame=5)
         if(is_excute){
@@ -76,7 +76,7 @@ pub fn falco_fairland(fighter: &mut L2CFighterCommon) {
     animation = "attack_air_b",
     animcmd = "effect_attackairb"
     )]
-fn dedede_attack_air_b_effect(fighter: &mut L2CFighterCommon) {
+fn dedede_bair_effect(fighter: &mut L2CFighterCommon) {
     acmd!({
         frame(6)
         if(is_execute){
@@ -89,6 +89,6 @@ fn dedede_attack_air_b_effect(fighter: &mut L2CFighterCommon) {
 
 pub fn install() {
     acmd::add_hooks!(
-dedede_attack_air_b_game, dedede_attack_air_b_effect
+        dedede_bair, dedede_bair_effect
 );    
 }
