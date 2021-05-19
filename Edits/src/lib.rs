@@ -7,6 +7,7 @@ mod dedede;
 mod falco;
 mod fox;
 mod gannon;
+mod luigi;
 mod mario;
 mod marth;
 mod mk;
@@ -24,6 +25,7 @@ pub fn main() {
     falco::install();
     fox::install();
     gannon::install();
+    luigi::install();
     mario::install();
     marth::install();
     mk::install();
