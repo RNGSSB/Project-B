@@ -8,7 +8,7 @@ use smash::app;
 
 #[acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
-    battle_object_kind = FIGHTER_KIND_MARIO, 
+    battle_object_kind = FIGHTER_KIND_IKE, 
     animation = "attack_air_f",
     animcmd = "game_attackairf")]
 pub fn ike_fair(fighter: &mut L2CFighterCommon) {
