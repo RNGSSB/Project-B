@@ -15,6 +15,7 @@ mod ness;
 mod samus;
 mod snake;
 mod sonic;
+mod wario;
 mod wolf;
 
 #[skyline::main(name = "acmd_test")]
@@ -33,5 +34,6 @@ pub fn main() {
     samus::install();
     snake::install();
     sonic::install();
+    wario::install();
     wolf::install();
 }
