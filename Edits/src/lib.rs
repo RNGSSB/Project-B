@@ -12,6 +12,7 @@ mod mario;
 mod marth;
 mod mk;
 mod ness;
+mod puff;
 mod samus;
 mod snake;
 mod sonic;
@@ -31,6 +32,7 @@ pub fn main() {
     marth::install();
     mk::install();
     ness::install();
+    puff::install();
     samus::install();
     snake::install();
     sonic::install();
