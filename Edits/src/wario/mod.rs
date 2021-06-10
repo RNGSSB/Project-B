@@ -41,7 +41,7 @@ pub fn wario_nair(fighter: &mut L2CFighterCommon) {
 
 #[acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
-    battle_object_kind = FIGHTER_KIND_MARIO, 
+    battle_object_kind = FIGHTER_KIND_WARIO, 
     animation = "attack_s4",
     animcmd = "game_attacks4")]
 pub fn wario_fsmash(fighter: &mut L2CFighterCommon) {
@@ -62,7 +62,7 @@ pub fn wario_fsmash(fighter: &mut L2CFighterCommon) {
 
 #[acmd_func(
     battle_object_category = BATTLE_OBJECT_CATEGORY_FIGHTER, 
-    battle_object_kind = FIGHTER_KIND_MARIO, 
+    battle_object_kind = FIGHTER_KIND_WARIO, 
     animation = "attack_dash",
     animcmd = "game_attackdash")]
 pub fn wario_fsmash(fighter: &mut L2CFighterCommon) {
